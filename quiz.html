@@ -17,7 +17,8 @@
 .quiz-question{font-size:1.35rem;line-height:1.5;margin:0 0 18px}
 .quiz-options{display:grid;gap:12px}
 .quiz-option{display:block;width:100%;text-align:left;background:#fff;border:2px solid rgba(20,24,40,.12);border-radius:12px;padding:14px 16px;font-size:1rem;line-height:1.5;cursor:pointer;transition:border-color .15s ease,background .15s ease;font-family:inherit;color:inherit}
-.quiz-option:hover{border-color:var(--orange,#F28C28);background:rgba(242,140,40,.06)}
+.quiz-option,.quiz-start-btn,.quiz-ghost-btn,.quiz-cta-btn{-webkit-tap-highlight-color:transparent}
+.quiz-option:focus,.quiz-start-btn:focus,.quiz-ghost-btn:focus,.quiz-cta-btn:focus{outline:none}
 .quiz-start-btn,.quiz-cta-btn{display:inline-block;background:var(--orange,#F28C28);color:#fff;font-weight:700;letter-spacing:.03em;border:none;border-radius:999px;padding:14px 28px;font-size:1rem;cursor:pointer;text-decoration:none;font-family:inherit}
 .quiz-ghost-btn{display:inline-block;background:transparent;color:inherit;font-weight:700;border:2px solid rgba(20,24,40,.2);border-radius:999px;padding:12px 24px;font-size:.95rem;cursor:pointer;text-decoration:none;font-family:inherit}
 .quiz-result-country{font-size:2.2rem;line-height:1.2;margin:6px 0 2px}
@@ -215,6 +216,7 @@ function renderQuestion(){
     var b=document.createElement("button");
     b.type="button"; b.className="quiz-option"; b.textContent=opt.t[L];
     b.addEventListener("click",function(){
+      b.blur();
       scores[opt.c]=(scores[opt.c]||0)+1;
       lastPicked[opt.c]=current;
       current++;
