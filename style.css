@@ -1602,3 +1602,9 @@ footer,
 .aj-quiz-promo-btn:hover{opacity:.9}
 
 .aj-stats-event{font-weight:700;letter-spacing:.02em;margin:26px 0 10px}
+
+/* Stats inside a report card (under the report links) */
+.aj-stats.aj-stats-in-card{background:transparent;border:none;box-shadow:none;margin:20px 0 2px;padding:20px 0 0;border-top:1px solid var(--border);border-radius:0}
+.aj-stats.aj-stats-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.aj-stats-in-card .aj-stat strong{font-size:clamp(26px,3vw,36px)}
+@media (max-width:768px){.aj-stats.aj-stats-3{grid-template-columns:repeat(3,minmax(0,1fr))}}
