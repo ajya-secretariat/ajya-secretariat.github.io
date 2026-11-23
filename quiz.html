@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="A 12-question quiz that matches you with an African country. By AJYA (Africa & Japan Youth Alliance)." name="description"/>
+<title>Africa Country Match Quiz | AJYA</title>
+<link href="style.css" rel="stylesheet"/>
+<script defer="" src="script.js"></script>
+<style>
+.quiz-wrap{max-width:760px;margin:0 auto}
+.quiz-card{background:#fff;border:1px solid rgba(20,24,40,.08);border-radius:16px;box-shadow:0 10px 30px rgba(20,24,40,.08);padding:28px 24px;margin-top:24px}
+.quiz-progress{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.quiz-progress-track{flex:1;height:8px;background:rgba(20,24,40,.08);border-radius:99px;overflow:hidden}
+.quiz-progress-bar{height:100%;background:var(--orange,#F28C28);width:0%;transition:width .3s ease}
+.quiz-progress-text{font-size:.85rem;font-weight:700;letter-spacing:.04em;white-space:nowrap}
+.quiz-question{font-size:1.35rem;line-height:1.5;margin:0 0 18px}
+.quiz-options{display:grid;gap:12px}
+.quiz-option{display:block;width:100%;text-align:left;background:#fff;border:2px solid rgba(20,24,40,.12);border-radius:12px;padding:14px 16px;font-size:1rem;line-height:1.5;cursor:pointer;transition:border-color .15s ease,background .15s ease;font-family:inherit;color:inherit}
+.quiz-option:hover{border-color:var(--orange,#F28C28);background:rgba(242,140,40,.06)}
+.quiz-start-btn,.quiz-cta-btn{display:inline-block;background:var(--orange,#F28C28);color:#fff;font-weight:700;letter-spacing:.03em;border:none;border-radius:999px;padding:14px 28px;font-size:1rem;cursor:pointer;text-decoration:none;font-family:inherit}
+.quiz-ghost-btn{display:inline-block;background:transparent;color:inherit;font-weight:700;border:2px solid rgba(20,24,40,.2);border-radius:999px;padding:12px 24px;font-size:.95rem;cursor:pointer;text-decoration:none;font-family:inherit}
+.quiz-result-country{font-size:2.2rem;line-height:1.2;margin:6px 0 2px}
+.quiz-result-capital{opacity:.65;margin:0 0 16px}
+.quiz-points{margin:14px 0 0;padding-left:1.2em;line-height:1.8}
+.quiz-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px}
+.quiz-hidden{display:none}
+</style>
+</head>
+<body class="renewal-inner page-quiz">
+<!-- HEADER -->
+<header class="header">
+<a class="logo" href="index.html#home">
+      AJYA<span>.</span>
+</a>
+</header>
+<main>
+<section class="section">
+<div class="renewal-shell quiz-wrap">
+<p class="section-label" data-en="QUIZ" data-ja="クイズ">QUIZ</p>
+<h1 data-en="Which African Country Matches You?" data-ja="あなたに合うアフリカの国は？">Which African Country Matches You?</h1>
+<p data-en="Answer 12 questions and find the African country that fits your style. The 11 possible results include countries whose young people joined TICAD Youth Drive 2026 in Accra." data-ja="12の質問に答えると、あなたのスタイルに合うアフリカの国がわかります。結果の11か国には、TICAD Youth Drive 2026（アクラ）に参加した若者の国も含まれています。">Answer 12 questions and find the African country that fits your style. The 11 possible results include countries whose young people joined TICAD Youth Drive 2026 in Accra.</p>
+
+<div class="quiz-card" id="quizStart">
+<p data-en="It takes about 2 minutes. There are no right or wrong answers — just follow your instincts." data-ja="所要時間は約2分。正解はありません。直感で選んでみてください。">It takes about 2 minutes. There are no right or wrong answers — just follow your instincts.</p>
+<div class="quiz-actions">
+<button class="quiz-start-btn" id="startBtn" type="button"><span data-en="START THE QUIZ" data-ja="クイズをはじめる">START THE QUIZ</span></button>
+</div>
+</div>
+
+<div class="quiz-card quiz-hidden" id="quizMain">
+<div class="quiz-progress">
+<span class="quiz-progress-text" id="progressText">Q1 / 12</span>
+<div class="quiz-progress-track"><div class="quiz-progress-bar" id="progressBar"></div></div>
+</div>
+<h2 class="quiz-question" id="questionText"></h2>
+<div class="quiz-options" id="optionsBox"></div>
+</div>
+
+<div class="quiz-card quiz-hidden" id="quizResult">
+<p class="section-label" data-en="YOUR MATCH" data-ja="あなたに合う国は">YOUR MATCH</p>
+<h2 class="quiz-result-country" id="resultCountry"></h2>
+<p class="quiz-result-capital" id="resultCapital"></p>
+<p id="resultWhy"></p>
+<ul class="quiz-points" id="resultPoints"></ul>
+<div class="quiz-actions">
+<a class="quiz-cta-btn" href="https://docs.google.com/forms/d/e/1FAIpQLSdMGOJdkl2_bqrLSY5sNFvTXRBUAPYm647q8GQ7wfaTFg6KGA/viewform" rel="noopener" target="_blank"><span data-en="JOIN US AT TICAD YOUTH DRIVE 2027 ↗" data-ja="TICAD Youth Drive 2027に関心登録する ↗">JOIN US AT TICAD YOUTH DRIVE 2027 ↗</span></a>
+<button class="quiz-ghost-btn" id="retakeBtn" type="button"><span data-en="RETAKE" data-ja="もう一度やる">RETAKE</span></button>
+<a class="quiz-ghost-btn" href="index.html"><span data-en="BACK TO TOP" data-ja="トップへ戻る">BACK TO TOP</span></a>
+</div>
+</div>
+
+</div>
+</section>
+</main>
+<footer></footer>
+<script>
+(function(){
+"use strict";
+function lang(){ try { return localStorage.getItem("ajya-language")==="ja" ? "ja" : "en"; } catch(e){ return "en"; } }
+var QUESTIONS=[
+{q:{en:"How would you like to travel?",ja:"理想の旅のスタイルは？"},options:[
+{t:{en:"A safari across endless savannah",ja:"果てしないサバンナでサファリ"},c:"TZ"},
+{t:{en:"Ancient ruins and deep history",ja:"古代遺跡と深い歴史を巡る"},c:"ET"},
+{t:{en:"Slow days in a seaside city",ja:"海辺の街でのんびり過ごす"},c:"SN"},
+{t:{en:"The energy of a huge, buzzing city",ja:"大都市の熱気を体感する"},c:"NG"}]},
+{q:{en:"Which breakfast tempts you most?",ja:"朝ごはん、どれに惹かれる？"},options:[
+{t:{en:"Spiced coffee with injera bread",ja:"スパイス香るコーヒーとインジェラ"},c:"ET"},
+{t:{en:"Chocolate — from the home of cacao",ja:"チョコレート（カカオの国の）"},c:"CI"},
+{t:{en:"Fresh fruit and fragrant tea",ja:"フルーツと香り高い紅茶"},c:"KE"},
+{t:{en:"Jollof rice, rich and smoky",ja:"スモーキーなジョロフライス"},c:"NG"}]},
+{q:{en:"Pick a sound for your weekend.",ja:"週末に聴きたい音楽は？"},options:[
+{t:{en:"Afrobeats — impossible not to dance",ja:"アフロビーツ（踊らずにいられない）"},c:"NG"},
+{t:{en:"Highlife — warm guitar and horns",ja:"ハイライフ（温かいギターとホーン）"},c:"GH"},
+{t:{en:"Ethio-jazz — mysterious and groovy",ja:"エチオジャズ（神秘的でグルーヴィ）"},c:"ET"},
+{t:{en:"Amapiano — smooth South African house",ja:"アマピアノ（南アフリカのハウス）"},c:"ZA"}]},
+{q:{en:"Your ideal weekend plan?",ja:"週末の理想の過ごし方は？"},options:[
+{t:{en:"Trekking to see mountain gorillas",ja:"ゴリラトレッキング"},c:"RW"},
+{t:{en:"Surfing on Atlantic waves",ja:"大西洋の波でサーフィン"},c:"MA"},
+{t:{en:"Chasing a giant waterfall",ja:"巨大な滝を巡る"},c:"ZW"},
+{t:{en:"Hunting for fabrics in a lively market",ja:"活気ある市場で布探し"},c:"GH"}]},
+{q:{en:"Which work style sounds like you?",ja:"仕事のスタイル、どれが近い？"},options:[
+{t:{en:"Fast-moving startup energy",ja:"スタートアップのように速く動く"},c:"RW"},
+{t:{en:"Building carefully, together as a team",ja:"チームでじっくりものづくり"},c:"TZ"},
+{t:{en:"Mastering a craft with your hands",ja:"手仕事の技を極める"},c:"MA"},
+{t:{en:"Business around food and farming",ja:"農業や食のビジネス"},c:"CI"}]},
+{q:{en:"Choose a landscape.",ja:"心ひかれる景色は？"},options:[
+{t:{en:"Mount Kilimanjaro above the plains",ja:"平原にそびえるキリマンジャロ"},c:"TZ"},
+{t:{en:"Victoria Falls, thundering and vast",ja:"轟音を立てるビクトリアの滝"},c:"ZW"},
+{t:{en:"The silence of the Sahara desert",ja:"サハラ砂漠の静けさ"},c:"MA"},
+{t:{en:"Great Rift Valley lakes and highlands",ja:"大地溝帯の湖と高原"},c:"KE"}]},
+{q:{en:"Pick a drink.",ja:"飲み物をひとつ選ぶなら？"},options:[
+{t:{en:"Coffee from the birthplace of coffee",ja:"コーヒー発祥の地のコーヒー"},c:"ET"},
+{t:{en:"Tea from green highland farms",ja:"高原の茶畑の紅茶"},c:"KE"},
+{t:{en:"A cacao drink, rich and deep",ja:"濃厚なカカオドリンク"},c:"CI"},
+{t:{en:"Rooibos tea under a big sky",ja:"広い空の下でルイボスティー"},c:"ZA"}]},
+{q:{en:"What city vibe do you love?",ja:"好きな街の雰囲気は？"},options:[
+{t:{en:"Clean, calm and well-organised",ja:"清潔で整った、落ち着いた街"},c:"RW"},
+{t:{en:"A historic old town of winding alleys",ja:"路地が迷路のような歴史ある旧市街"},c:"MA"},
+{t:{en:"A mega-city that never slows down",ja:"止まらないメガシティ"},c:"NG"},
+{t:{en:"An arty seaside capital",ja:"海沿いのアートな首都"},c:"SN"}]},
+{q:{en:"A value you want to live by?",ja:"大切にしたい価値観は？"},options:[
+{t:{en:"Ubuntu — I am because we are",ja:"ウブントゥ（みんながいるから私がいる）"},c:"ZA"},
+{t:{en:"Peace, and rebuilding together",ja:"平和と、共に立て直すこと"},c:"RW"},
+{t:{en:"Teranga — generous hospitality",ja:"テランガ（心からのもてなし）"},c:"SN"},
+{t:{en:"Independence and entrepreneurial spirit",ja:"自立と起業家精神"},c:"GH"}]},
+{q:{en:"Fashion item you'd love to own?",ja:"身につけてみたいのは？"},options:[
+{t:{en:"Kente cloth, woven with meaning",ja:"意味が織り込まれたケンテ布"},c:"GH"},
+{t:{en:"Leather babouches and crafts",ja:"革のバブーシュや工芸品"},c:"MA"},
+{t:{en:"Maasai bead jewellery",ja:"マサイのビーズアクセサリー"},c:"KE"},
+{t:{en:"Bold street fashion",ja:"大胆なストリートファッション"},c:"ZA"}]},
+{q:{en:"An experience on your bucket list?",ja:"一度は体験してみたいのは？"},options:[
+{t:{en:"A traditional coffee ceremony",ja:"伝統のコーヒーセレモニー"},c:"ET"},
+{t:{en:"Making chocolate at a cacao farm",ja:"カカオ農園でチョコレート作り"},c:"CI"},
+{t:{en:"Adventure activities at a great waterfall",ja:"大瀑布でのアクティビティ"},c:"ZW"},
+{t:{en:"Meeting gorillas in a misty forest",ja:"霧の森でゴリラに会う"},c:"RW"}]},
+{q:{en:"Your dream project?",ja:"夢のプロジェクトは？"},options:[
+{t:{en:"Changing society with technology",ja:"テクノロジーで社会を変える"},c:"KE"},
+{t:{en:"Reviving a region through tourism",ja:"観光で地域を元気にする"},c:"ZW"},
+{t:{en:"Taking fashion and design to the world",ja:"ファッションやデザインを世界へ"},c:"SN"},
+{t:{en:"Food and farming — spices and flavours",ja:"食と農業（スパイスの島から）"},c:"TZ"}]}
+];
+var RESULTS={
+GH:{name:{en:"Ghana",ja:"ガーナ"},capital:{en:"Capital: Accra",ja:"首都：アクラ"},
+why:{en:"You are drawn to warmth, music and people who welcome you like family. Ghana's friendly energy and creative spirit match yours.",ja:"温かさと音楽、人を家族のように迎える雰囲気に惹かれるあなた。ガーナのフレンドリーなエネルギーと創造性がぴったりです。"},
+points:[{en:"Kente cloth and lively markets in Accra and Kumasi",ja:"アクラやクマシの市場とケンテ織り"},
+{en:"Highlife and hiplife music everywhere",ja:"街にあふれるハイライフ音楽"},
+{en:"Independent in 1957 — a pioneer of African independence",ja:"1957年独立、アフリカ独立のパイオニア"}]},
+KE:{name:{en:"Kenya",ja:"ケニア"},capital:{en:"Capital: Nairobi",ja:"首都：ナイロビ"},
+why:{en:"You love both wild nature and new ideas. Kenya pairs world-famous safaris with one of Africa's boldest tech scenes.",ja:"大自然と新しいアイデア、どちらも好きなあなた。ケニアは世界的なサファリと、アフリカ有数のテックシーンを併せ持ちます。"},
+points:[{en:"The Maasai Mara and the Great Migration",ja:"マサイマラとヌーの大移動"},
+{en:"'Silicon Savannah' — Nairobi's startup scene and M-Pesa",ja:"「シリコンサバンナ」と呼ばれるナイロビのスタートアップとM-Pesa"},
+{en:"Highland tea and coffee farms",ja:"高原の紅茶とコーヒーの農園"}]},
+ET:{name:{en:"Ethiopia",ja:"エチオピア"},capital:{en:"Capital: Addis Ababa",ja:"首都：アディスアベバ"},
+why:{en:"You are curious about deep roots and one-of-a-kind cultures. Ethiopia has its own script, calendar and coffee tradition — unlike anywhere else.",ja:"深いルーツと唯一無二の文化に惹かれるあなた。エチオピアには独自の文字と暦、そしてコーヒー文化があります。"},
+points:[{en:"The birthplace of coffee, with its own ceremony",ja:"コーヒー発祥の地、伝統のセレモニー"},
+{en:"Rock-hewn churches of Lalibela",ja:"ラリベラの岩窟教会群"},
+{en:"Ethio-jazz and a calendar of 13 months",ja:"エチオジャズと「13か月」の暦"}]},
+SN:{name:{en:"Senegal",ja:"セネガル"},capital:{en:"Capital: Dakar",ja:"首都：ダカール"},
+why:{en:"You value hospitality, art and the sea. Senegal's spirit of teranga — generous welcome — fits your open heart.",ja:"もてなしとアート、海を愛するあなた。セネガルの「テランガ」（心からのもてなし）の精神が合っています。"},
+points:[{en:"Dakar — West Africa's hub of art and fashion",ja:"西アフリカのアートとファッションの中心・ダカール"},
+{en:"Gorée Island and Lake Retba, the pink lake",ja:"ゴレ島とピンクの湖・レトバ湖"},
+{en:"Thieboudienne, the national dish of fish and rice",ja:"国民食チェブジェン（魚と米の料理）"}]},
+RW:{name:{en:"Rwanda",ja:"ルワンダ"},capital:{en:"Capital: Kigali",ja:"首都：キガリ"},
+why:{en:"You like things thoughtful, clean and forward-looking. Rwanda — the land of a thousand hills — is rebuilding itself with remarkable focus.",ja:"思慮深く、整っていて、前を向くものが好きなあなた。「千の丘の国」ルワンダは、驚くほどの集中力で自らを立て直してきました。"},
+points:[{en:"Gorilla trekking in Volcanoes National Park",ja:"火山国立公園のゴリラトレッキング"},
+{en:"Kigali — one of Africa's cleanest, most organised capitals",ja:"アフリカで最も清潔で整った首都のひとつ・キガリ"},
+{en:"A fast-growing tech and conference hub",ja:"急成長するテックと国際会議の拠点"}]},
+MA:{name:{en:"Morocco",ja:"モロッコ"},capital:{en:"Capital: Rabat",ja:"首都：ラバト"},
+why:{en:"You are drawn to craftsmanship, colour and timeless streets. Morocco layers desert, ocean and ancient medinas into one journey.",ja:"手仕事と色彩、時を超えた街並みに惹かれるあなた。モロッコは砂漠と海、古代のメディナをひとつの旅に重ねます。"},
+points:[{en:"The medinas of Marrakech and Fes",ja:"マラケシュとフェスの旧市街（メディナ）"},
+{en:"A night in the Sahara under the stars",ja:"星空の下、サハラ砂漠の一夜"},
+{en:"Tagines, mint tea and master artisans",ja:"タジン鍋、ミントティー、職人たちの技"}]},
+ZA:{name:{en:"South Africa",ja:"南アフリカ"},capital:{en:"Capital: Pretoria / Cape Town",ja:"首都：プレトリア／ケープタウン"},
+why:{en:"You thrive on diversity and big landscapes. South Africa's mix of cultures, nature and creativity — held together by ubuntu — matches your breadth.",ja:"多様性と大きな風景の中で輝くあなた。ウブントゥの精神で結ばれた南アフリカの文化と自然の豊かさが合っています。"},
+points:[{en:"Table Mountain and the Cape of Good Hope",ja:"テーブルマウンテンと喜望峰"},
+{en:"Winelands around Stellenbosch",ja:"ステレンボッシュ周辺のワインランド"},
+{en:"Amapiano beats and 11 official languages",ja:"アマピアノのビートと11の公用語"}]},
+TZ:{name:{en:"Tanzania",ja:"タンザニア"},capital:{en:"Capital: Dodoma (Dar es Salaam is the largest city)",ja:"首都：ドドマ（最大都市はダルエスサラーム）"},
+why:{en:"You are steady, peace-loving and quietly ambitious. Tanzania's calm strength — from Kilimanjaro to Zanzibar — feels like you.",ja:"穏やかで平和を愛し、静かな野心を持つあなた。キリマンジャロからザンジバルまで、タンザニアの落ち着いた強さが似ています。"},
+points:[{en:"Mount Kilimanjaro and the Serengeti migration",ja:"キリマンジャロとセレンゲティの大移動"},
+{en:"Zanzibar — island of spices and stone towns",ja:"スパイスの島ザンジバルとストーンタウン"},
+{en:"One of Africa's most peaceful, united nations",ja:"アフリカで最も平和で結束した国のひとつ"}]},
+NG:{name:{en:"Nigeria",ja:"ナイジェリア"},capital:{en:"Capital: Abuja (Lagos is the largest city)",ja:"首都：アブジャ（最大都市はラゴス）"},
+why:{en:"You run on energy and ambition. Nigeria — Africa's largest population and economy — moves at your speed, with music and film the world now follows.",ja:"エネルギーと野心で動くあなた。アフリカ最大の人口と経済を持つナイジェリアは、あなたのスピードに合っています。"},
+points:[{en:"Lagos — a mega-city of startups, art and hustle",ja:"スタートアップとアートのメガシティ・ラゴス"},
+{en:"Afrobeats and Nollywood, loved worldwide",ja:"世界を魅了するアフロビーツとノリウッド映画"},
+{en:"Jollof rice — a point of national pride",ja:"国民の誇り・ジョロフライス"}]},
+CI:{name:{en:"Côte d'Ivoire",ja:"コートジボワール"},capital:{en:"Capital: Yamoussoukro (Abidjan is the economic capital)",ja:"首都：ヤムスクロ（経済の中心はアビジャン）"},
+why:{en:"You love flavour, rhythm and generous tables. The world's top cacao producer pairs French-speaking flair with West African warmth.",ja:"味とリズム、豊かな食卓が好きなあなた。世界一のカカオ生産国は、フランス語圏の洗練と西アフリカの温かさを併せ持ちます。"},
+points:[{en:"The world's largest cacao producer — chocolate's home",ja:"世界最大のカカオ生産国、チョコレートの故郷"},
+{en:"Abidjan, the 'Pearl of the Lagoons'",ja:"「ラグーンの真珠」アビジャン"},
+{en:"Grand-Bassam, a UNESCO-listed coastal town",ja:"世界遺産の海辺の町グラン・バッサム"}]},
+ZW:{name:{en:"Zimbabwe",ja:"ジンバブエ"},capital:{en:"Capital: Harare",ja:"首都：ハラレ"},
+why:{en:"You are drawn to wonders and quiet resilience. Zimbabwe holds one of the world's great waterfalls and the stone ruins of a medieval kingdom.",ja:"驚異と静かな強さに惹かれるあなた。ジンバブエには世界最大級の滝と、中世王国の石造遺跡があります。"},
+points:[{en:"Victoria Falls — one of the Seven Natural Wonders",ja:"世界七大自然驚異のひとつ・ビクトリアの滝"},
+{en:"Great Zimbabwe, ruins of a medieval stone city",ja:"中世の石造都市・グレートジンバブエ遺跡"},
+{en:"Hwange National Park and its great elephant herds",ja:"ワンゲ国立公園とゾウの大群"}]}
+};
+var current=0, scores={}, lastPicked={};
+var startBox=document.getElementById("quizStart"),
+    mainBox=document.getElementById("quizMain"),
+    resultBox=document.getElementById("quizResult"),
+    qText=document.getElementById("questionText"),
+    optBox=document.getElementById("optionsBox"),
+    pText=document.getElementById("progressText"),
+    pBar=document.getElementById("progressBar");
+function renderQuestion(){
+  var L=lang(), q=QUESTIONS[current];
+  pText.textContent="Q"+(current+1)+" / "+QUESTIONS.length;
+  pBar.style.width=Math.round(current/QUESTIONS.length*100)+"%";
+  qText.textContent=q.q[L];
+  optBox.innerHTML="";
+  q.options.forEach(function(opt){
+    var b=document.createElement("button");
+    b.type="button"; b.className="quiz-option"; b.textContent=opt.t[L];
+    b.addEventListener("click",function(){
+      scores[opt.c]=(scores[opt.c]||0)+1;
+      lastPicked[opt.c]=current;
+      current++;
+      if(current<QUESTIONS.length){ renderQuestion(); } else { showResult(); }
+    });
+    optBox.appendChild(b);
+  });
+}
+function showResult(){
+  var L=lang(), best=null, bestScore=-1, bestLast=-1;
+  Object.keys(scores).forEach(function(code){
+    var s=scores[code], l=lastPicked[code];
+    if(s>bestScore || (s===bestScore && l>bestLast)){ best=code; bestScore=s; bestLast=l; }
+  });
+  var r=RESULTS[best];
+  document.getElementById("resultCountry").textContent=r.name[L];
+  document.getElementById("resultCapital").textContent=r.capital[L];
+  document.getElementById("resultWhy").textContent=r.why[L];
+  var ul=document.getElementById("resultPoints"); ul.innerHTML="";
+  r.points.forEach(function(p){ var li=document.createElement("li"); li.textContent=p[L]; ul.appendChild(li); });
+  pBar.style.width="100%";
+  mainBox.classList.add("quiz-hidden");
+  resultBox.classList.remove("quiz-hidden");
+  resultBox.scrollIntoView({behavior:"smooth",block:"start"});
+}
+document.getElementById("startBtn").addEventListener("click",function(){
+  startBox.classList.add("quiz-hidden");
+  resultBox.classList.add("quiz-hidden");
+  mainBox.classList.remove("quiz-hidden");
+  current=0; scores={}; lastPicked={};
+  renderQuestion();
+});
+document.getElementById("retakeBtn").addEventListener("click",function(){
+  resultBox.classList.add("quiz-hidden");
+  mainBox.classList.remove("quiz-hidden");
+  current=0; scores={}; lastPicked={};
+  renderQuestion();
+});
+})();
+</script>
+</body>
+</html>
